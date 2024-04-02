@@ -1,5 +1,6 @@
 import csv
 import sys
+import time
 
 from util import Node, StackFrontier, QueueFrontier
 
@@ -14,6 +15,7 @@ movies = {}
 
 
 def load_data(directory):
+    directory="small"
     """
     Load data from CSV files into memory.
     """
@@ -91,6 +93,29 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    path=[]
+    explored = []
+    frontier = StackFrontier()
+    start = Node(state=source, parent=None, action=None)
+    frontier.add(start)
+    while True:
+        if frontier.empty():
+            return None
+        temp = frontier.remove()
+        explored.append(temp.state)
+        if temp.state == target:
+            while temp.parent != None:
+                path.append((temp.action,temp.state))
+                temp = temp.parent
+            path.reverse()
+            return path
+        else:
+            neighbors = neighbors_for_person(temp.state)
+            for i in neighbors:
+                if frontier.contains_state(i[1]) == False and i[1] not in explored:
+                    newNode = Node(state=i[1], parent=temp, action=i[0])
+                    frontier.add(newNode)
+
 
     # TODO
     raise NotImplementedError
